@@ -12,6 +12,8 @@
         // devdependencies only since built app does not require module
         "import/no-extraneous-dependencies": 1,
         // webpack.dev.js and webpack.prod.js necessary as per webpack docs
-        "import/extensions": 1
+        "import/extensions": 1,
+        // no-undef as warning for jest tests
+        "no-undef": 1
     }
 }

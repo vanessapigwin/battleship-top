@@ -33,15 +33,25 @@ describe("coordinates create a ship on gameboard", () => {
   });
 });
 
-describe("receive attack, nothing hit", () => {
+describe("receive attack", () => {
   test("store missed attack", () => {
     const attackCoord = [10, 10];
     gameboard.receiveAttack(attackCoord);
     expect(gameboard.attackedCells.length).toBe(1);
   });
 
-  test.skip("attack hits and triggers hit ship", () => {
+  test("attack hits and triggers hit func", () => {
+    const attackCoord = [0, 0];
+    const ship = gameboard.shipsPlaced[0];
+    const spy = jest.spyOn(ship, "hit");
+    gameboard.receiveAttack(attackCoord);
+    expect(gameboard.attackedCells.length).toBe(2);
+    expect(spy).toHaveBeenCalled();
+  });
+
+  test("attack point should be unique", () => {
     const attackCoord = [0, 0];
     gameboard.receiveAttack(attackCoord);
+    expect(gameboard.attackedCells.length).not.toBe(3);
   });
 });

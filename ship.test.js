@@ -13,12 +13,14 @@ test("Ship model with length exists", () => {
 
 describe("function hit updates timesHit", () => {
   test("timesHit updates when hit function is called for first time", () => {
-    expect(ship.hit()).toBe(1);
+    ship.hit();
+    expect(ship).toHaveProperty("timesHit", 1);
   });
 
   test("timesHit updates as usual", () => {
-    // second hit from setup
-    expect(ship.hit()).toBe(2);
+    // second hit since setup
+    ship.hit();
+    expect(ship).toHaveProperty("timesHit", 2);
   });
 });
 
@@ -30,6 +32,7 @@ describe("isSunk reports true or false", () => {
   test("isSunk reports true when timesHit is at least equal to length", () => {
     // third hit from setup
     ship.hit();
+    expect(ship).toHaveProperty("timesHit", 3);
     expect(ship.isSunk()).toBeTruthy();
   });
 });

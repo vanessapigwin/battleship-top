@@ -1,25 +1,25 @@
+function Point(x, y) {
+  return { x, y };
+}
+
 function Ship(coordinateList) {
   let timesHit;
   const { length } = coordinateList;
 
   function hit() {
-    if (!timesHit) {
-      timesHit = 1;
+    if (!this.timesHit) {
+      this.timesHit = 1;
     } else {
-      timesHit += 1;
+      this.timesHit += 1;
     }
-    return timesHit;
+    // return timesHit;
   }
 
   function isSunk() {
-    return timesHit >= length;
+    return this.timesHit >= length;
   }
 
   return { coordinateList, length, timesHit, hit, isSunk };
-}
-
-function Point(x, y) {
-  return { x, y };
 }
 
 function GameBoard() {
@@ -33,18 +33,27 @@ function GameBoard() {
     y_max: 10,
   };
 
-  function canPlace(point) {
-    if (
+  function hasShip(point) {
+    /*
+    Checks if point object can be placed on the gameboard. 
+    If another ship occupies the cell, return false
+    input: Point object
+    return: boolean
+    */
+    return (
       occupiedCells.length > 0 &&
       occupiedCells.some(
         (content) => content.x === point.x && content.y === point.y
       )
-    )
-      return false;
-    return true;
+    );
   }
 
   function place(coords) {
+    /*
+    Places ship on the gameboard only if the ship does not collide with
+    other existing ships on the board.
+    input: list of coordinates [int, int]
+    */
     const shipCoords = [];
     coords.forEach((pair) => {
       const point = Point(...pair);
@@ -53,7 +62,7 @@ function GameBoard() {
         point.x <= bounds.x_max &&
         point.y >= bounds.y_min &&
         point.y <= bounds.y_max &&
-        canPlace(point)
+        !hasShip(point)
       )
         shipCoords.push(point);
     });
@@ -66,8 +75,31 @@ function GameBoard() {
   }
 
   function receiveAttack(pair) {
+    /*
+    Receives a pair of int coordinates. Point record is made and stored to avoid 
+    reselection of already attacked point, regardless of hit or miss. If the point
+    hits a coordinate on a listed ship (from shipsPlaced list), the hit function
+    from the ship object is triggered
+    */
     const attackPoint = Point(...pair);
+    if (
+      attackedCells.some(
+        (content) => content.x === attackPoint.x && content.y === attackPoint.y
+      )
+    )
+      return;
     attackedCells.push(attackPoint);
+    for (let i = 0; i < shipsPlaced.length; i += 1) {
+      const shipCoords = shipsPlaced[i].coordinateList;
+      if (
+        shipCoords.some(
+          (content) =>
+            content.x === attackPoint.x && content.y === attackPoint.y
+        )
+      ) {
+        shipsPlaced[i].hit();
+      }
+    }
   }
 
   return { shipsPlaced, attackedCells, place, receiveAttack };

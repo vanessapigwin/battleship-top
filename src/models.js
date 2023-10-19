@@ -2,6 +2,14 @@ function Point(x, y) {
   return { x, y };
 }
 
+function pointInList(list, point) {
+  // a utility function to check if list of points contain a certain point
+  return (
+    list.length > 0 &&
+    list.some((content) => content.x === point.x && content.y === point.y)
+  );
+}
+
 function Ship(coordinateList) {
   let timesHit;
   const { length } = coordinateList;
@@ -12,7 +20,6 @@ function Ship(coordinateList) {
     } else {
       this.timesHit += 1;
     }
-    // return timesHit;
   }
 
   function isSunk() {
@@ -40,12 +47,7 @@ function GameBoard() {
     input: Point object
     return: boolean
     */
-    return (
-      occupiedCells.length > 0 &&
-      occupiedCells.some(
-        (content) => content.x === point.x && content.y === point.y
-      )
-    );
+    return pointInList(occupiedCells, point);
   }
 
   function place(coords) {
@@ -80,29 +82,57 @@ function GameBoard() {
     reselection of already attacked point, regardless of hit or miss. If the point
     hits a coordinate on a listed ship (from shipsPlaced list), the hit function
     from the ship object is triggered
+    input: pair of coordinates
+    output: boolean (if attack was received)
     */
     const attackPoint = Point(...pair);
-    if (
-      attackedCells.some(
-        (content) => content.x === attackPoint.x && content.y === attackPoint.y
-      )
-    )
-      return;
+    if (pointInList(attackedCells, attackPoint)) return false;
     attackedCells.push(attackPoint);
     for (let i = 0; i < shipsPlaced.length; i += 1) {
       const shipCoords = shipsPlaced[i].coordinateList;
-      if (
-        shipCoords.some(
-          (content) =>
-            content.x === attackPoint.x && content.y === attackPoint.y
-        )
-      ) {
+      if (pointInList(shipCoords, attackPoint)) {
         shipsPlaced[i].hit();
+        if (shipsPlaced[i].isSunk()) {
+          shipsPlaced.splice(0, 1);
+        }
+        break;
       }
     }
+    return true;
   }
 
-  return { shipsPlaced, attackedCells, place, receiveAttack };
+  function randomAttackPoint() {
+    /*
+    get random numbers to make a point, returns the random point if not
+    present in list of previously attacked points, otherwise call the function
+    again and return a new point
+    return: point object
+    */
+    const x = Math.floor(Math.random() * bounds.x_max + 1);
+    const y = Math.floor(Math.random() * bounds.y_max + 1);
+    const point = Point(x, y);
+    if (!pointInList(attackedCells, point)) return point;
+
+    const newPoint = randomAttackPoint();
+    return newPoint;
+  }
+
+  return {
+    shipsPlaced,
+    attackedCells,
+    place,
+    receiveAttack,
+    randomAttackPoint,
+  };
 }
 
-export { Point, Ship, GameBoard };
+function Player(name) {
+  let isWinner;
+  const gameboard = GameBoard();
+  function setName(string) {
+    this.name = string;
+  }
+  return { name, isWinner, setName, gameboard };
+}
+
+export { Point, Ship, GameBoard, Player };

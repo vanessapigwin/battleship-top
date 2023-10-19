@@ -54,4 +54,17 @@ describe("receive attack", () => {
     gameboard.receiveAttack(attackCoord);
     expect(gameboard.attackedCells.length).not.toBe(3);
   });
+
+  test("sinking of ship is reflected", () => {
+    gameboard.receiveAttack([0, 1]);
+    gameboard.receiveAttack([0, 2]);
+    expect(gameboard.shipsPlaced).toHaveLength(0);
+  });
+});
+
+test("get random point", () => {
+  expect(gameboard.randomAttackPoint()).toEqual({
+    x: expect.any(Number),
+    y: expect.any(Number),
+  });
 });

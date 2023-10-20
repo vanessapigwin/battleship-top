@@ -1,4 +1,4 @@
-import { Player } from "./src/models";
+import { Player } from "../src/models";
 
 const player = Player();
 

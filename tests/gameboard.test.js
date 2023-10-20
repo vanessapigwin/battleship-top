@@ -1,4 +1,4 @@
-import { GameBoard } from "./src/models";
+import { GameBoard } from "../src/models";
 
 const gameboard = GameBoard();
 

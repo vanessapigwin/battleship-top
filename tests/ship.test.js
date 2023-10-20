@@ -1,4 +1,4 @@
-import { Ship, Point } from "./src/models";
+import { Ship, Point } from "../src/models";
 
 const ship = Ship([Point(0, 0), Point(0, 1), Point(0, 2)]);
 

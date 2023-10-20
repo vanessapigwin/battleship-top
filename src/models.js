@@ -58,7 +58,7 @@ function GameBoard() {
     */
     const shipCoords = [];
     coords.forEach((pair) => {
-      const point = Point(...pair);
+      const point = Point(pair[0], pair[1]);
       if (
         point.x >= bounds.x_min &&
         point.x <= bounds.x_max &&

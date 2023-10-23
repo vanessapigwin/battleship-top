@@ -1,21 +1,45 @@
 const BOARD_HEIGHT = 10;
 const BOARD_WIDTH = 10;
 const SHIP_LIST = {
-  Carrier: 5,
-  Battleship: 4,
-  Submarine: 3,
-  Destroyer: 3,
-  Patrol: 2,
+  0: {
+    title: "carrier",
+    length: 5,
+  },
+  1: {
+    title: "battleship",
+    length: 4,
+  },
+  2: {
+    title: "submarine",
+    length: 3,
+  },
+  3: {
+    title: "destroyer",
+    length: 3,
+  },
+  4: {
+    title: "patrol",
+    length: 2,
+  },
 };
+
 const placementStatus = {
-  currentShip: "Carrier",
+  shipIdx: 0,
   orientation: "vertical",
-  selectedCoords: undefined,
+  highlightedCoords: undefined,
+  occupiedCells: [],
+  dataPoints: [],
 };
 
 function updateMsgDisplay() {
-  const elem = document.querySelector(".gameboard > .orientation");
-  elem.textContent = `Orientation: ${placementStatus.orientation}`;
+  const mainMsgElem = document.querySelector(".gameboard > #placeship-status");
+  const subMsgElem = document.querySelector(".gameboard > .orientation");
+  if (placementStatus.shipIdx < Object.keys(SHIP_LIST).length) {
+    mainMsgElem.textContent = `Place your ${
+      SHIP_LIST[placementStatus.shipIdx].title
+    }`;
+    subMsgElem.textContent = `Orientation: ${placementStatus.orientation}`;
+  }
 }
 
 function updateOrientation() {
@@ -35,28 +59,8 @@ function createBoardUI(id) {
   return board;
 }
 
-function updateHovered(indices) {
-  const cells = document.querySelectorAll("#placeships > .cell");
-  cells.forEach((cell) => {
-    cell.classList.remove("hovered");
-  });
-
-  indices.forEach((idx) => {
-    document.querySelector(`[data-idx="${idx}"]`).classList.add("hovered");
-  });
-}
-
-function updateAdded() {
-  const indices = placementStatus.selectedCoords.map(
-    (point) => point[0] + point[1] * 10
-  );
-  indices.forEach((idx) => {
-    document.querySelector(`[data-idx="${idx}"]`).classList.add("occupied");
-  });
-}
-
 function highlightShip(e) {
-  const length = SHIP_LIST[placementStatus.currentShip];
+  const { length } = SHIP_LIST[placementStatus.shipIdx];
   const x = e.target.dataset.idx % 10;
   const y = Math.floor(e.target.dataset.idx / 10);
 
@@ -72,9 +76,52 @@ function highlightShip(e) {
   const coords = tempCoords.filter(
     (point) => point[0] >= 0 && point[0] < 10 && point[1] >= 0 && point[1] < 10
   );
-  placementStatus.selectedCoords = coords;
+  placementStatus.highlightedCoords = coords;
   const selectorIndices = coords.map((point) => point[0] + point[1] * 10);
-  updateHovered(selectorIndices);
+
+  const cells = document.querySelectorAll("#placeships > .cell");
+  cells.forEach((cell) => {
+    cell.classList.remove("hovered");
+  });
+  selectorIndices.forEach((idx) => {
+    document.querySelector(`[data-idx="${idx}"]`).classList.add("hovered");
+  });
+}
+
+function updateAdded() {
+  const hasClashes = placementStatus.highlightedCoords.some((pair) =>
+    placementStatus.occupiedCells.some(
+      (p) => p[0] === pair[0] && p[1] === pair[1]
+    )
+  );
+  if (
+    !hasClashes &&
+    placementStatus.highlightedCoords.length ===
+      SHIP_LIST[placementStatus.shipIdx].length &&
+    placementStatus.dataPoints.length < Object.keys(SHIP_LIST).length
+  ) {
+    placementStatus.occupiedCells = placementStatus.occupiedCells.concat(
+      placementStatus.highlightedCoords
+    );
+    placementStatus.dataPoints.push(placementStatus.highlightedCoords);
+    placementStatus.shipIdx += 1;
+  }
+  const indices = placementStatus.highlightedCoords.map(
+    (point) => point[0] + point[1] * 10
+  );
+  indices.forEach((idx) => {
+    document.querySelector(`[data-idx="${idx}"]`).classList.add("occupied");
+  });
+  if (placementStatus.shipIdx === Object.keys(SHIP_LIST).length) {
+    document
+      .querySelector("#placeships")
+      .removeEventListener("pointerover", highlightShip);
+    document
+      .querySelector("#placeships")
+      .removeEventListener("click", updateAdded);
+  } else {
+    updateMsgDisplay();
+  }
 }
 
 const placementBoard = createBoardUI("#placeships");

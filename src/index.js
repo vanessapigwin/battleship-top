@@ -1,3 +1,5 @@
-import { Game } from "./game";
+import "./style.css";
+import Game from "./game";
+import { placementStatus, SHIP_LIST } from "./controller";
 
-const game = Game();
+Object.entries(SHIP_LIST).forEach((line) => console.log(line));

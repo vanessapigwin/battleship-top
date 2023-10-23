@@ -1,3 +1,5 @@
+const BOARD_SIZE = 10;
+
 function Point(x, y) {
   return { x, y };
 }
@@ -35,9 +37,9 @@ function GameBoard() {
   const attackedCells = [];
   const bounds = {
     x_min: 0,
-    x_max: 10,
+    x_max: BOARD_SIZE,
     y_min: 0,
-    y_max: 10,
+    y_max: BOARD_SIZE,
   };
 
   function hasShip(point) {
@@ -118,6 +120,7 @@ function GameBoard() {
   }
 
   return {
+    bounds,
     shipsPlaced,
     attackedCells,
     place,

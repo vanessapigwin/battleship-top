@@ -25,7 +25,6 @@ const SHIP_LIST = {
 
 const placementBoard = createBoardUI("#placeships");
 const placementButton = document.querySelector(".gameboard > button");
-const modal = document.querySelector(".gameboard");
 
 /*
 placementStatus object used to track immediate changes to the placement UI, including
@@ -95,17 +94,6 @@ function highlightShip(e) {
   });
 }
 
-function loadGameUI() {
-  /*
-  clear Ui from placement modal and replace with game ui. removes all event
-  listeners, pointer events and hides modal.
-  */
-  placementBoard.removeEventListener("pointerover", highlightShip);
-  /* eslint no-use-before-define: 1 -- necessary to allow removal of event listeners */
-  placementBoard.removeEventListener("click", updateAdded);
-  document.querySelector(".modal").classList.add("hidden");
-}
-
 function updateAdded() {
   /*
   checks if currently highlighted coordinates clash with existing points on
@@ -130,15 +118,19 @@ function updateAdded() {
     );
     placementStatus.dataPoints.push(placementStatus.highlightedCoords);
     placementStatus.shipIdx += 1;
+
+    // update of ui
+    const indices = placementStatus.highlightedCoords.map(
+      (point) => point[0] + point[1] * 10
+    );
+    indices.forEach((idx) => {
+      document.querySelector(`[data-idx="${idx}"]`).classList.add("occupied");
+    });
   }
-  const indices = placementStatus.highlightedCoords.map(
-    (point) => point[0] + point[1] * 10
-  );
-  indices.forEach((idx) => {
-    document.querySelector(`[data-idx="${idx}"]`).classList.add("occupied");
-  });
+
+  // condition to exit
   if (placementStatus.shipIdx === Object.keys(SHIP_LIST).length) {
-    loadGameUI();
+    document.querySelector(".modal").classList.add("hidden");
   } else {
     updateMsgDisplay();
   }
@@ -147,16 +139,6 @@ function updateAdded() {
 placementBoard.addEventListener("pointerover", highlightShip);
 placementBoard.addEventListener("click", updateAdded);
 placementButton.addEventListener("click", updateOrientation);
-modal.addEventListener(
-  "animationend",
-  (e) => {
-    if (e.type === "animationend") {
-      modal.style.display = "none";
-      document.querySelector(".main-game").classList.remove("hidden");
-    }
-  },
-  false
-);
 
 updateMsgDisplay();
 

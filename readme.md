@@ -3,7 +3,7 @@ Coursework for The Odin Project, Javascript course with TDD
 
 ## To-Do
 - [x] Make gameboard, player, and ship models. Must have tests
-- [ ] Make UI for adding ships
+- [x] Make UI for adding ships
 - [ ] Make UI for actual battle
 - [ ] Write game logic
 - [ ] Integrate game logic with UI

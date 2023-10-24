@@ -1,3 +1,5 @@
+import { placementStatus } from "./placecontroller";
+
 const BOARD_HEIGHT = 10;
 const BOARD_WIDTH = 10;
 
@@ -15,5 +17,22 @@ function createBoardUI(id) {
   }
   return board;
 }
+
+const modal = document.querySelector(".gameboard");
+const enemyMoveBoard = createBoardUI("#enemy-board");
+const playerMoveBoard = createBoardUI("#player-board");
+
+modal.addEventListener("animationend", () => {
+  modal.remove();
+  document.querySelector(".main-game").classList.remove("hidden");
+  placementStatus.dataPoints.forEach((shipCoords) => {
+    const indices = shipCoords.map((point) => point[0] + point[1] * 10);
+    indices.forEach((idx) => {
+      document
+        .querySelector(`#enemy-board > .cell[data-idx="${idx}"]`)
+        .classList.add("occupied");
+    });
+  });
+});
 
 export default createBoardUI;

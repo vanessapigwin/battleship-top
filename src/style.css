@@ -50,3 +50,33 @@ body {
 .cell.hovered {
     background-color: var(--theme-black);
 }
+
+button {
+    background-color: var(--theme-black);
+    border: none;
+    color: white;
+    border-radius: 10px;
+    padding: 15px;
+    font-size: 1em;
+    font-family: 'Courier New', Courier, monospace;
+}
+
+.modal.hidden {
+    pointer-events: none;
+    -webkit-animation: fadeinout 0.5s linear forwards;
+    animation: fadeinout 1s linear forwards;
+    opacity: 0;
+}
+
+.main-game.hidden {
+    display: none;
+}
+
+@keyframes fadeinout {
+    0% {
+        opacity: 1;
+    }
+    50% {
+        opacity: 0;
+    }
+}

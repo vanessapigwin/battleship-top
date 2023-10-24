@@ -7,13 +7,20 @@
 </head>
 <body>
     <div class="modal gameboard">
-        <div class="title">BATTLESHIP</div>
+        <div class="title">Welcome, Admiral!</div>
         <div class="msg" id="placeship-status">Place your carrier</div>
         <div class="shipbox" id="placeships"></div>
         <div class="msg orientation"></div>
         <button>Change Orientation</button>
     </div>
-    <!-- <div class="enemy-board">Enemy board</div>
-    <div class="player-board">Player Board</div> -->
+    <div class="main-game hidden">
+        <div class="title">Battleship</div>
+        <div class="enemy-board" id="enemy-board">
+            <div class="message">Enemy Moves</div>
+        </div>
+        <div class="player-board" id="player-board">
+            <div class="message">Player Moves</div>
+        </div>
+    </div>
 </body>
 </html>

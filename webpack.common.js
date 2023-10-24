@@ -7,7 +7,8 @@ module.exports = {
   entry: {
     index: "./src/index.js",
     models: "./src/models.js",
-    controller: "./src/controller.js",
+    placecontroller: "./src/placecontroller.js",
+    gamecontroller: "./src/gamecontroller.js",
     game: "./src/game.js",
   },
   plugins: [

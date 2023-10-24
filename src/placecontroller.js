@@ -1,5 +1,5 @@
-const BOARD_HEIGHT = 10;
-const BOARD_WIDTH = 10;
+import createBoardUI from "./gamecontroller";
+
 const SHIP_LIST = {
   0: {
     title: "carrier",
@@ -23,6 +23,15 @@ const SHIP_LIST = {
   },
 };
 
+const placementBoard = createBoardUI("#placeships");
+const placementButton = document.querySelector(".gameboard > button");
+const modal = document.querySelector(".gameboard");
+
+/*
+placementStatus object used to track immediate changes to the placement UI, including
+ship currently being placed, orientation, coordinates as highlighted, cells already
+occupied and set of coordinates to be used as player's ship coordinates
+*/
 const placementStatus = {
   shipIdx: 0,
   orientation: "vertical",
@@ -32,6 +41,10 @@ const placementStatus = {
 };
 
 function updateMsgDisplay() {
+  /*
+  clears text content of message boxes showing ship name and orientation and
+  updates content with the latest ship name and orientation.
+  */
   const mainMsgElem = document.querySelector(".gameboard > #placeship-status");
   const subMsgElem = document.querySelector(".gameboard > .orientation");
   if (placementStatus.shipIdx < Object.keys(SHIP_LIST).length) {
@@ -48,18 +61,12 @@ function updateOrientation() {
   updateMsgDisplay();
 }
 
-function createBoardUI(id) {
-  const board = document.querySelector(id);
-  for (let i = 0; i < BOARD_HEIGHT * BOARD_WIDTH; i += 1) {
-    const div = document.createElement("div");
-    div.classList.add("cell");
-    div.dataset.idx = i;
-    board.appendChild(div);
-  }
-  return board;
-}
-
 function highlightShip(e) {
+  /*
+  highlights cells based on current ship name (and length), and gets coordinates
+  of said highlighted cells depending on state of orientation. the coodinates are 
+  filtered out if out of bounds
+  */
   const { length } = SHIP_LIST[placementStatus.shipIdx];
   const x = e.target.dataset.idx % 10;
   const y = Math.floor(e.target.dataset.idx / 10);
@@ -88,7 +95,25 @@ function highlightShip(e) {
   });
 }
 
+function loadGameUI() {
+  /*
+  clear Ui from placement modal and replace with game ui. removes all event
+  listeners, pointer events and hides modal.
+  */
+  placementBoard.removeEventListener("pointerover", highlightShip);
+  /* eslint no-use-before-define: 1 -- necessary to allow removal of event listeners */
+  placementBoard.removeEventListener("click", updateAdded);
+  document.querySelector(".modal").classList.add("hidden");
+}
+
 function updateAdded() {
+  /*
+  checks if currently highlighted coordinates clash with existing points on
+  the board. If no clashes are detected and the highlighted coordinates
+  are within bounds, the set of coordinates are noted to list of already
+  placed points and also added into a list of ship coordinates. This method
+  is active until all the ships are placed and the main UI of the game is loaded.
+  */
   const hasClashes = placementStatus.highlightedCoords.some((pair) =>
     placementStatus.occupiedCells.some(
       (p) => p[0] === pair[0] && p[1] === pair[1]
@@ -113,23 +138,25 @@ function updateAdded() {
     document.querySelector(`[data-idx="${idx}"]`).classList.add("occupied");
   });
   if (placementStatus.shipIdx === Object.keys(SHIP_LIST).length) {
-    document
-      .querySelector("#placeships")
-      .removeEventListener("pointerover", highlightShip);
-    document
-      .querySelector("#placeships")
-      .removeEventListener("click", updateAdded);
+    loadGameUI();
   } else {
     updateMsgDisplay();
   }
 }
 
-const placementBoard = createBoardUI("#placeships");
 placementBoard.addEventListener("pointerover", highlightShip);
 placementBoard.addEventListener("click", updateAdded);
-document
-  .querySelector(".gameboard > button")
-  .addEventListener("click", updateOrientation);
+placementButton.addEventListener("click", updateOrientation);
+modal.addEventListener(
+  "animationend",
+  (e) => {
+    if (e.type === "animationend") {
+      modal.style.display = "none";
+      document.querySelector(".main-game").classList.remove("hidden");
+    }
+  },
+  false
+);
 
 updateMsgDisplay();
 

@@ -1,11 +1,12 @@
 import "./style.css";
 import Game from "./game";
-import { SHIP_LIST, placementStatus } from "./placecontroller";
+import { SHIP_LIST, placementStatus } from "./placeui";
 import {
-  enemyMoveBoard,
   playerMoveBoard,
   placeShipOnBoardUI,
-} from "./gamecontroller";
+  updatePlayerMovesUI,
+  updateEnemyMovesUI,
+} from "./gameui";
 
 const game = Game();
 const modal = document.querySelector(".gameboard");
@@ -58,16 +59,17 @@ modal.addEventListener("animationend", () => {
 playerMoveBoard.addEventListener("click", (e) => {
   const x = e.target.dataset.idx % 10;
   const y = Math.floor(e.target.dataset.idx / 10);
-  if (game.gameOver) {
-    alert(`${game.currentPlayer.name} wins!`);
+  if (!game.gameOver) {
+    const enemyShipHit = game.playRound([x, y]);
+    updatePlayerMovesUI(e, enemyShipHit);
   }
   if (!game.gameOver) {
-    const shipHit = game.opponent.gameboard.receiveAttack([x, y]);
-    // player uses x and y to make a move on enemy board
-    // update player move UI depending on hit
-  }
-  if (!game.gameOver) {
-    // ai selects random attack from player board
+    const aiMove = game.player.gameboard.randomAttackPoint();
+    const playerShipHit = game.playRound([aiMove.x, aiMove.y]);
+    updateEnemyMovesUI(aiMove.x, aiMove.y, playerShipHit);
     // update enemy move UI depending on hit
+  }
+  if (game.gameOver) {
+    alert(`${game.opponent.name} wins!`);
   }
 });

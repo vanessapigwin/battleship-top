@@ -1,5 +1,3 @@
-// import createBoardUI from "./gamecontroller";
-
 const BOARD_HEIGHT = 10;
 const BOARD_WIDTH = 10;
 

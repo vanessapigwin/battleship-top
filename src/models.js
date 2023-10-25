@@ -97,7 +97,7 @@ function GameBoard() {
       if (pointInList(shipCoords, attackPoint)) {
         shipsPlaced[i].hit();
         if (shipsPlaced[i].isSunk()) {
-          shipsPlaced.splice(0, 1);
+          shipsPlaced.splice(i, 1);
         }
         break;
       }

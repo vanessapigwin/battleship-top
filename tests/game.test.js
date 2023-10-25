@@ -55,6 +55,7 @@ describe("play round game flow test", () => {
   });
 
   test("game over is reflected on object when there are no more boats", () => {
+    newGame.playRound([10, 10]);
     expect(newGame.gameOver).toBeTruthy();
   });
 });

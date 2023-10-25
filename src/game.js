@@ -14,10 +14,14 @@ function Game() {
   }
 
   function playRound(pair) {
-    if (this.opponent.gameboard.receiveAttack(pair) !== undefined) {
+    const hitMade = this.opponent.gameboard.receiveAttack(pair);
+    if (hitMade !== undefined) {
       this.switchPlayer();
+      this.gameOver =
+        this.opponent.gameboard.shipsPlaced.length === 0 ||
+        this.currentPlayer.gameboard.shipsPlaced.length === 0;
     }
-    this.gameOver = opponent.gameboard.shipsPlaced.length === 0;
+    return hitMade;
   }
 
   function init() {

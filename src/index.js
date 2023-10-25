@@ -6,6 +6,7 @@ import {
   placeShipOnBoardUI,
   updatePlayerMovesUI,
   updateEnemyMovesUI,
+  gameOverScreen,
 } from "./gameui";
 
 const game = Game();
@@ -31,10 +32,10 @@ modal.addEventListener("animationend", () => {
   } else {
     game.player.setName("Player");
   }
+  game.ai.setName("AI");
 
   // AI places ships on game element
   let placed = 0;
-  const temp = [];
   while (placed < Object.keys(SHIP_LIST).length) {
     const arr = [];
     const orientation = randomChoice(["horizontal", "vertical"]);
@@ -50,10 +51,8 @@ modal.addEventListener("animationend", () => {
     const isPlacedSuccess = game.ai.gameboard.place(arr);
     if (isPlacedSuccess) {
       placed += 1;
-      temp.push(arr);
     }
   }
-  placeShipOnBoardUI(temp, "#player-board");
 });
 
 playerMoveBoard.addEventListener("click", (e) => {
@@ -67,9 +66,8 @@ playerMoveBoard.addEventListener("click", (e) => {
     const aiMove = game.player.gameboard.randomAttackPoint();
     const playerShipHit = game.playRound([aiMove.x, aiMove.y]);
     updateEnemyMovesUI(aiMove.x, aiMove.y, playerShipHit);
-    // update enemy move UI depending on hit
   }
   if (game.gameOver) {
-    alert(`${game.opponent.name} wins!`);
+    gameOverScreen(game.opponent.name);
   }
 });

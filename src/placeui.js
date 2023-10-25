@@ -1,5 +1,4 @@
-const BOARD_HEIGHT = 10;
-const BOARD_WIDTH = 10;
+import { createBoardUI } from "./gameui";
 
 const SHIP_LIST = {
   0: {
@@ -23,21 +22,6 @@ const SHIP_LIST = {
     length: 2,
   },
 };
-
-function createBoardUI(id) {
-  /*
-    creates n x n grid inside any element with id. returns the parent element with
-    id = id.
-    */
-  const board = document.querySelector(id);
-  for (let i = 0; i < BOARD_HEIGHT * BOARD_WIDTH; i += 1) {
-    const div = document.createElement("div");
-    div.classList.add("cell");
-    div.dataset.idx = i;
-    board.appendChild(div);
-  }
-  return board;
-}
 
 const placementBoard = createBoardUI("#placeships");
 const placementButton = document.querySelector(".gameboard > button");
@@ -165,4 +149,4 @@ form.addEventListener("submit", (e) => {
 
 updateMsgDisplay();
 
-export { SHIP_LIST, placementStatus, createBoardUI };
+export { SHIP_LIST, placementStatus };

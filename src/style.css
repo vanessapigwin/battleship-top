@@ -7,16 +7,18 @@
     --theme-black: #182825;
     --theme-blue: #449DD1;
     --theme-red: #9F4A54;
+    --theme-white: #F4EDEA;
 }
 
 body {
-    background-color: #F4EDEA;
+    background-color: var(--theme-white);
     font-family: 'Courier New', Courier, monospace;
     height: 100vh;
     display: flex;
     flex-direction: column;
 }
 
+.alert-content,
 .content,
 .board-area,
 .board {
@@ -25,7 +27,7 @@ body {
     flex-direction: column;
     align-items: center;
     padding: 30px;
-    gap: 30px;
+    gap: 30px; 
 }
 
 .board-area,
@@ -90,8 +92,10 @@ button {
     opacity: 0;
 }
 
+.alert.hidden,
 .main-game.hidden {
     display: none;
+    pointer-events: none;
 }
 
 .footer,
@@ -118,6 +122,28 @@ input {
     text-align: center;
     background-color: transparent;
     font-family: 'Courier New', Courier, monospace;
+}
+
+.alert {
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: #18282557;
+}
+
+.alert-content {
+    position: absolute;
+    border-radius: 10px;
+    width: 20%;
+    top: 50%;
+    left: 50%;
+    padding: 20px;
+    transform: translate(-50%, -50%);
+    background-color: var(--theme-white)
 }
 
 @keyframes fadeinout {

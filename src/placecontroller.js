@@ -1,4 +1,7 @@
-import createBoardUI from "./gamecontroller";
+// import createBoardUI from "./gamecontroller";
+
+const BOARD_HEIGHT = 10;
+const BOARD_WIDTH = 10;
 
 const SHIP_LIST = {
   0: {
@@ -23,8 +26,24 @@ const SHIP_LIST = {
   },
 };
 
+function createBoardUI(id) {
+  /*
+    creates n x n grid inside any element with id. returns the parent element with
+    id = id.
+    */
+  const board = document.querySelector(id);
+  for (let i = 0; i < BOARD_HEIGHT * BOARD_WIDTH; i += 1) {
+    const div = document.createElement("div");
+    div.classList.add("cell");
+    div.dataset.idx = i;
+    board.appendChild(div);
+  }
+  return board;
+}
+
 const placementBoard = createBoardUI("#placeships");
 const placementButton = document.querySelector(".gameboard > button");
+const form = document.querySelector("#form");
 
 /*
 placementStatus object used to track immediate changes to the placement UI, including
@@ -37,6 +56,7 @@ const placementStatus = {
   highlightedCoords: undefined,
   occupiedCells: [],
   dataPoints: [],
+  playerName: undefined,
 };
 
 function updateMsgDisplay() {
@@ -131,6 +151,7 @@ function updateAdded() {
   // condition to exit
   if (placementStatus.shipIdx === Object.keys(SHIP_LIST).length) {
     document.querySelector(".modal").classList.add("hidden");
+    form.requestSubmit();
   } else {
     updateMsgDisplay();
   }
@@ -139,7 +160,11 @@ function updateAdded() {
 placementBoard.addEventListener("pointerover", highlightShip);
 placementBoard.addEventListener("click", updateAdded);
 placementButton.addEventListener("click", updateOrientation);
+form.addEventListener("submit", (e) => {
+  e.preventDefault();
+  placementStatus.playerName = form.querySelector("input").value;
+});
 
 updateMsgDisplay();
 
-export { SHIP_LIST, placementStatus };
+export { SHIP_LIST, placementStatus, createBoardUI };

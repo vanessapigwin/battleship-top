@@ -8,13 +8,15 @@ function Game() {
   let opponent;
 
   function switchPlayer() {
-    this.currentPlayer = currentPlayer === player ? ai : player;
-    this.opponent = opponent === ai ? player : ai;
+    const cur = this.currentPlayer;
+    this.currentPlayer = this.opponent;
+    this.opponent = cur;
   }
 
   function playRound(pair) {
-    opponent.gameboard.receiveAttack(pair);
-    this.switchPlayer();
+    if (this.opponent.gameboard.receiveAttack(pair) !== undefined) {
+      this.switchPlayer();
+    }
     this.gameOver = opponent.gameboard.shipsPlaced.length === 0;
   }
 

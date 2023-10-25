@@ -1,4 +1,4 @@
-const BOARD_SIZE = 10;
+const BOARD_MAX_IDX = 9;
 
 function Point(x, y) {
   return { x, y };
@@ -37,9 +37,9 @@ function GameBoard() {
   const attackedCells = [];
   const bounds = {
     x_min: 0,
-    x_max: BOARD_SIZE,
+    x_max: BOARD_MAX_IDX,
     y_min: 0,
-    y_max: BOARD_SIZE,
+    y_max: BOARD_MAX_IDX,
   };
 
   function hasShip(point) {
@@ -75,7 +75,9 @@ function GameBoard() {
       const ship = Ship(shipCoords);
       shipsPlaced.push(ship);
       shipCoords.forEach((point) => occupiedCells.push(point));
+      return true;
     }
+    return false;
   }
 
   function receiveAttack(pair) {
@@ -88,7 +90,7 @@ function GameBoard() {
     output: boolean (if attack was received)
     */
     const attackPoint = Point(...pair);
-    if (pointInList(attackedCells, attackPoint)) return false;
+    if (pointInList(attackedCells, attackPoint)) return undefined;
     attackedCells.push(attackPoint);
     for (let i = 0; i < shipsPlaced.length; i += 1) {
       const shipCoords = shipsPlaced[i].coordinateList;
@@ -100,7 +102,7 @@ function GameBoard() {
         break;
       }
     }
-    return true;
+    return pointInList(occupiedCells, attackPoint);
   }
 
   function randomAttackPoint() {
@@ -110,8 +112,8 @@ function GameBoard() {
     again and return a new point
     return: point object
     */
-    const x = Math.floor(Math.random() * bounds.x_max + 1);
-    const y = Math.floor(Math.random() * bounds.y_max + 1);
+    const x = Math.floor(Math.random() * bounds.x_max);
+    const y = Math.floor(Math.random() * bounds.y_max);
     const point = Point(x, y);
     if (!pointInList(attackedCells, point)) return point;
 

@@ -22,6 +22,15 @@ describe("coordinates create a ship on gameboard", () => {
     expect(gameboard.shipsPlaced.length).toBe(1);
   });
 
+  test("out of bound point will not be added", () => {
+    const coords = [
+      [10, 10],
+      [9, 10],
+    ];
+    gameboard.place(coords);
+    expect(gameboard.shipsPlaced.length).toBe(1);
+  });
+
   test("overlapping ship will not be added", () => {
     const coords = [
       [0, 0],
@@ -36,7 +45,7 @@ describe("coordinates create a ship on gameboard", () => {
 describe("receive attack", () => {
   test("store missed attack", () => {
     const attackCoord = [10, 10];
-    gameboard.receiveAttack(attackCoord);
+    expect(gameboard.receiveAttack(attackCoord)).toBeFalsy();
     expect(gameboard.attackedCells.length).toBe(1);
   });
 
@@ -51,7 +60,7 @@ describe("receive attack", () => {
 
   test("attack point should be unique", () => {
     const attackCoord = [0, 0];
-    gameboard.receiveAttack(attackCoord);
+    expect(gameboard.receiveAttack(attackCoord)).toBeUndefined();
     expect(gameboard.attackedCells.length).not.toBe(3);
   });
 
